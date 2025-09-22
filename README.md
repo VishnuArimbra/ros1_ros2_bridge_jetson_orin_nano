@@ -1,6 +1,6 @@
 # ROS1_ROS2_Bridge_Jetson_Devices
 
-Isolated Dockerized setup for ROS1 (Noetic), ROS2 (Humble) and the ROS1–ROS2 bridge. Each runs in a separate container to avoid dependency conflicts. The setup uses the `dustynv/ros:humble-desktop-l4t-r36.4.0` image (optimized for Jetson hardware) for ROS2 and the bridge, enabling seamless communication between ROS1 and ROS2 via the [ros1_bridge](https://github.com/ros2/ros1_bridge) package.
+Isolated Dockerized setup for ROS1 (Noetic), ROS2 (Humble) and the ROS1–ROS2 bridge. Each runs in a separate container to avoid dependency conflicts. The setup uses the [`dustynv/ros:humble-desktop-l4t-r36.4.0`](https://hub.docker.com/layers/dustynv/ros/humble-desktop-l4t-r36.4.0/images/sha256-b8ee30b1ae189cfeeea755a7fd6b8aea74267f5c1bc0cfa4f19a6acec9d941e5) image (optimized for Jetson hardware) for ROS2 and the bridge, enabling seamless communication between ROS1 and ROS2 via the [ros1_bridge](https://github.com/ros2/ros1_bridge) package.
 
 ## Prerequisites
 

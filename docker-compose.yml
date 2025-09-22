@@ -1,0 +1,51 @@
+#version: '3'
+services:
+  # Service 1: ROS 1 Noetic container with Tilix
+  ros1-noetic:
+    image: ros1-noetic          # Your pre-built ROS 1 Noetic image
+    container_name: ros1-noetic-container
+    environment:
+      - DISPLAY=${DISPLAY}      # Pass the host display to the container
+      - QT_X11_NO_MITSHM=1      # Fix for shared memory issues with GUI apps
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # Mount X11 socket for GUI apps
+      - /dev/shm:/dev/shm                # Shared memory for heavy GUI apps like Gazebo
+      - $HOME:/home/user                 # Mount home directory for persistence
+    working_dir: /home/user      # Start in the shared home directory
+    network_mode: "host"         # Use host networking to allow communication
+    privileged: true             # For hardware acceleration (required for Gazebo)
+    #command: bash -c "tilix"     # Start the Tilix terminal inside the container
+    command: bash -c "sudo apt update && sudo apt install -y ros-noetic-rospy-tutorials tilix && tilix"
+    
+  # Service 2: ROS 2 Humble container
+  ros2-humble:
+    image: dustynv/ros:humble-desktop-l4t-r36.4.0  # Your pre-built ROS 2 Humble image
+    container_name: ros2-humble-container
+    environment:
+      - DISPLAY=${DISPLAY}      # Pass the host display to the container
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp  # DDS middleware implementation for ROS 2
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # Mount X11 socket for GUI apps
+      - $HOME:/home/user                  # Mount home directory
+    working_dir: /home/user      # Start in the shared home directory
+    network_mode: "host"         # Use host networking to allow communication
+    command: tail -f /dev/null
+    #command: bash -c  # Keeps the container open by running an interactive bash shell
+    #command: bash                 # Start a bash shell
+    
+      
+  # Service 3: ROS 1 - ROS 2 bridge
+  ros1-ros2-bridge:
+    image: dustynv/ros:humble-desktop-l4t-r36.4.0  # Your pre-built ROS 2 Humble image (use same ROS 2 image for bridge)
+    container_name: ros1-ros2-bridge-container
+    environment:
+      - DISPLAY=${DISPLAY}      # Pass the host display to the container
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp  # DDS middleware for bridging
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # Mount X11 socket for GUI apps
+      - $HOME:/home/user                  # Mount home directory
+    network_mode: "host"         # Use host networking to allow communication
+    command: bash -c "source /home/user/ros-humble-ros1-bridge/install/local_setup.bash && \
+                     export ROS_MASTER_URI=http://$(hostname -I | awk '{print $1}'):11311 && \
+                     ros2 run ros1_bridge dynamic_bridge --bridge-all-topics"
+
